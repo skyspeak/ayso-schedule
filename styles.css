@@ -1,37 +1,41 @@
 :root {
   color-scheme: light;
-  --bg: #fff6eb;
-  --ink: #3b2d26;
-  --muted: #8b7164;
-  --card: #fffdf9;
-  --line: #f0dcc8;
-  --accent: #3aa37a;
+  --bg: #d7eec3;
+  --bg-stripe: #cbe6b3;
+  --ink: #23401f;
+  --muted: #4f6d45;
+  --card: #fffdf6;
+  --line: #8fbf6a;
+  --accent: #2f9e5a;
   --accent-ink: #ffffff;
-  --home: #67c58a;
-  --home-ink: #174628;
-  --away: #7eb7ea;
+  --home: #7ad16a;
+  --home-ink: #1b4a1d;
+  --away: #7ec8ea;
   --away-ink: #163552;
   --ball: #fff;
-  --ball-line: #3b2d26;
-  --patch: #3b2d26;
+  --ball-line: #23401f;
+  --patch: #23401f;
+  --field-line: rgba(255, 255, 255, 0.55);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #1b2430;
-  --ink: #f4ece3;
-  --muted: #b5a394;
-  --card: #243140;
-  --line: #354557;
-  --accent: #7ed0a8;
-  --accent-ink: #173226;
-  --home: #7ad19a;
-  --home-ink: #143221;
+  --bg: #16351f;
+  --bg-stripe: #12401f;
+  --ink: #eef6e4;
+  --muted: #b7cda8;
+  --card: #1e3d28;
+  --line: #3d7a4a;
+  --accent: #8ee08a;
+  --accent-ink: #14321c;
+  --home: #7ad16a;
+  --home-ink: #14321c;
   --away: #8ec4f0;
   --away-ink: #123047;
-  --ball: #f4ece3;
-  --ball-line: #1b2430;
-  --patch: #1b2430;
+  --ball: #eef6e4;
+  --ball-line: #16351f;
+  --patch: #16351f;
+  --field-line: rgba(238, 246, 228, 0.18);
 }
 
 * {
@@ -47,14 +51,19 @@ body {
 
 body {
   font-family: "Nunito", sans-serif;
-  background: var(--bg);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--bg) 0 56px,
+      var(--bg-stripe) 56px 112px
+    );
   color: var(--ink);
-  padding: 28px 20px 48px;
+  padding: 32px 20px 56px;
 }
 
 .top,
 main {
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
 }
 
@@ -63,18 +72,17 @@ main {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .brand {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
 }
 
-.ball {
-  width: 42px;
-  height: 42px;
+.ball,
+.mini-ball {
   flex: none;
   stroke: var(--ball-line);
   stroke-width: 2.2;
@@ -82,30 +90,43 @@ main {
   stroke-linejoin: round;
 }
 
-.ball circle {
+.ball {
+  width: 52px;
+  height: 52px;
+}
+
+.mini-ball {
+  width: 28px;
+  height: 28px;
+}
+
+.ball circle,
+.mini-ball circle {
   fill: var(--ball);
 }
 
-.ball polygon {
+.ball polygon,
+.mini-ball polygon {
   fill: var(--patch);
   stroke: none;
 }
 
-.ball path {
+.ball path,
+.mini-ball path {
   fill: none;
 }
 
 .kicker {
   font-family: "Fredoka", sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 h1 {
   font-family: "Fredoka", sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.85rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -114,7 +135,7 @@ h1 {
 .lede {
   color: var(--muted);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .place {
@@ -128,11 +149,11 @@ h1 {
 
 .map {
   display: block;
-  margin: 0 0 18px;
-  border: 2px solid var(--line);
-  border-radius: 18px;
+  margin: 0 0 28px;
+  border: 3px solid var(--line);
+  border-radius: 24px;
   overflow: hidden;
-  height: 180px;
+  height: 200px;
   background: var(--card);
 }
 
@@ -143,9 +164,9 @@ h1 {
 }
 
 .theme {
-  width: 44px;
-  height: 44px;
-  border: 2px solid var(--line);
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--line);
   background: var(--card);
   color: var(--ink);
   border-radius: 50%;
@@ -155,8 +176,8 @@ h1 {
 }
 
 .theme svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -177,7 +198,7 @@ h1 {
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 18px;
 }
 
@@ -185,11 +206,11 @@ h1 {
 button {
   font-family: inherit;
   font-weight: 800;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   text-decoration: none;
   border-radius: 999px;
-  padding: 8px 14px;
-  border: 2px solid var(--line);
+  padding: 10px 16px;
+  border: 3px solid var(--line);
   background: var(--card);
   color: var(--ink);
   cursor: pointer;
@@ -201,72 +222,91 @@ button {
   color: var(--accent-ink);
 }
 
+.matches-title {
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+.matches-sub {
+  color: var(--muted);
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
 .agenda {
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: 22px;
 }
 
 .game {
   display: grid;
-  grid-template-columns: 6.6rem 8.2rem 1fr auto auto;
-  gap: 10px;
-  align-items: center;
+  gap: 22px;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 18px;
-  padding: 10px 12px;
+  border: 3px solid var(--line);
+  border-radius: 28px;
+  padding: 24px 24px 28px;
   color: inherit;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.game::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 12px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--field-line);
+  border: 2px solid var(--line);
+}
+
+.game.home {
+  border-color: var(--home);
+}
+
+.game.away {
+  border-color: var(--away);
 }
 
 .game:hover {
   border-color: var(--accent);
 }
 
-.when {
-  font-weight: 800;
-  font-size: 0.92rem;
-}
-
-.clock {
-  color: var(--muted);
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.match {
+.game-top {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: "Fredoka", sans-serif;
-  font-size: 1.15rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.v {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+.when {
   display: grid;
-  place-items: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  background: var(--bg);
+}
+
+.dow,
+.mon {
+  font-weight: 800;
+  font-size: 0.95rem;
   color: var(--muted);
 }
 
-.field {
-  color: var(--muted);
-  font-weight: 800;
-  font-size: 0.85rem;
+.day {
+  font-family: "Fredoka", sans-serif;
+  font-size: 3.4rem;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
 }
 
 .badge {
   font-family: "Fredoka", sans-serif;
-  font-size: 0.75rem;
-  padding: 4px 9px;
+  font-size: 0.9rem;
+  padding: 8px 12px;
   border-radius: 999px;
-  text-transform: lowercase;
 }
 
 .badge.home {
@@ -279,73 +319,86 @@ button {
   color: var(--away-ink);
 }
 
-.game-link {
-  grid-column: 1 / -1;
-  justify-self: start;
-  color: var(--accent);
+.scoreboard {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 4px;
+}
+
+.jersey {
+  font-family: "Fredoka", sans-serif;
+  font-size: 3.6rem;
+  line-height: 1;
+  text-align: center;
+  letter-spacing: -0.03em;
+}
+
+.versus {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.95rem;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
   font-weight: 800;
-  font-size: 0.8rem;
-  text-decoration: none;
-  display: none;
+  font-size: 0.98rem;
+  padding-bottom: 10px;
+}
+
+.meta strong {
+  color: var(--ink);
 }
 
 .cta {
-  margin-top: 22px;
-  padding: 20px 18px;
+  margin-top: 28px;
+  padding: 24px 22px;
   background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 22px;
+  border: 3px solid var(--line);
+  border-radius: 28px;
 }
 
 .cta h2 {
   font-family: "Fredoka", sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .cta p {
   color: var(--muted);
   font-weight: 700;
-  font-size: 0.92rem;
-  line-height: 1.45;
-  margin-bottom: 14px;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
 }
 
 .cta .actions {
   margin-bottom: 0;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 520px) {
+  .day,
+  .jersey {
+    font-size: 2.7rem;
+  }
+
   .game {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "when badge"
-      "clock field"
-      "match match";
+    padding: 20px 16px 26px;
+    gap: 18px;
   }
 
-  .when {
-    grid-area: when;
-  }
-
-  .clock {
-    grid-area: clock;
-  }
-
-  .match {
-    grid-area: match;
-  }
-
-  .field {
-    grid-area: field;
-  }
-
-  .badge {
-    grid-area: badge;
-  }
-
-  .game-link {
-    display: none;
+  .meta {
+    flex-direction: column;
+    gap: 6px;
   }
 }

@@ -1,5 +1,15 @@
 (function () {
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MONTHS = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+
+  const BALL = `<svg class="mini-ball" viewBox="0 0 48 48" aria-hidden="true">
+    <circle cx="24" cy="24" r="20"/>
+    <polygon points="24,16 29,20 27,26 21,26 19,20"/>
+    <path d="M24 16 L24 7 M29 20 L38 16 M27 26 L34 36 M21 26 L14 36 M19 20 L10 16"/>
+    <path d="M10 16 Q8 24 14 36 M38 16 Q40 24 34 36 M24 7 Q15 9 10 16 M24 7 Q33 9 38 16"/>
+  </svg>`;
 
   function googleEventUrl(game) {
     const compact = game.date.replace(/-/g, "");
@@ -14,11 +24,6 @@
       details: `Field ${game.field}\nMap: https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9`,
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
-  }
-
-  function dateLabel(game) {
-    const [, month, day] = game.date.split("-");
-    return `${game.weekday} ${MONTHS[Number(month) - 1]} ${Number(day)}`;
   }
 
   function currentTheme() {
@@ -42,17 +47,29 @@
 
   document.getElementById("agenda").innerHTML = AYSO_GAMES.map((game) => {
     const ha = game.isHome ? "home" : "away";
+    const [, month, day] = game.date.split("-");
     return `<li>
-      <a class="game" href="${googleEventUrl(game)}" target="_blank" rel="noreferrer">
-        <span class="when">${dateLabel(game)}</span>
-        <span class="clock">${game.startLabel}–${game.endLabel}</span>
-        <span class="match">
-          <span>${game.home}</span>
-          <span class="v">v</span>
-          <span>${game.away}</span>
-        </span>
-        <span class="field">Field ${game.field}</span>
-        <span class="badge ${ha}">${ha}</span>
+      <a class="game ${ha}" href="${googleEventUrl(game)}" target="_blank" rel="noreferrer">
+        <div class="game-top">
+          <div class="when">
+            <span class="dow">Saturday</span>
+            <span class="day">${Number(day)}</span>
+            <span class="mon">${MONTHS[Number(month) - 1]}</span>
+          </div>
+          <span class="badge ${ha}">${game.isHome ? "home game" : "away game"}</span>
+        </div>
+        <div class="scoreboard">
+          <span class="jersey">${game.home}</span>
+          <span class="versus">
+            ${BALL}
+            <span>vs</span>
+          </span>
+          <span class="jersey">${game.away}</span>
+        </div>
+        <div class="meta">
+          <span><strong>Kickoff</strong> ${game.startLabel}</span>
+          <span><strong>Pitch ${game.field}</strong></span>
+        </div>
       </a>
     </li>`;
   }).join("");
