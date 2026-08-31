@@ -33,15 +33,14 @@
   }
 
   function setTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("ayso-theme", theme);
-    const url = new URL(location.href);
-    url.searchParams.set("theme", theme);
-    history.replaceState(null, "", url);
-    const next = theme === "dark" ? "light" : "dark";
-    document.getElementById("theme-toggle").setAttribute(
+    const dark = theme === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    localStorage.setItem("ayso-theme", dark ? "dark" : "light");
+    const toggle = document.getElementById("theme-toggle");
+    toggle.setAttribute("aria-checked", dark ? "true" : "false");
+    toggle.setAttribute(
       "aria-label",
-      next === "dark" ? "Switch to dark mode" : "Switch to light mode"
+      dark ? "Switch to light mode" : "Switch to dark mode"
     );
   }
 
@@ -83,7 +82,9 @@
   document.getElementById("apple-cal").href = apple;
 
   setTheme(currentTheme());
-  document.getElementById("theme-toggle").addEventListener("click", () => {
+  document.getElementById("theme-toggle").addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     setTheme(currentTheme() === "dark" ? "light" : "dark");
   });
 })();

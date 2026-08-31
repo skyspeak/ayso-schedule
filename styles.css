@@ -83,6 +83,7 @@ main {
   height: auto;
   aspect-ratio: 1024 / 558;
   object-fit: cover;
+  pointer-events: none;
 }
 
 .intro {
@@ -172,38 +173,79 @@ h1 {
 }
 
 .theme {
+  all: unset;
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 48px;
-  height: 48px;
-  border: 3px solid var(--line);
-  background: var(--card);
-  color: var(--ink);
-  border-radius: 50%;
+  z-index: 10;
+  top: 14px;
+  right: 14px;
+  box-sizing: border-box;
+  width: 76px;
+  height: 40px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  border-radius: 999px;
+  background: #fffdf6;
   cursor: pointer;
+  box-shadow: 0 0 0 3px #23401f;
+}
+
+[data-theme="dark"] .theme {
+  background: #14321c;
+  box-shadow: 0 0 0 3px #eef6e4;
+}
+
+.theme-knob {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f5d84a;
+  transition: left 0.2s ease;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .theme-knob {
+  left: 40px;
+  background: #8ee08a;
+}
+
+.theme-sun,
+.theme-moon {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
+  pointer-events: none;
 }
 
 .theme svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   fill: none;
-  stroke: currentColor;
+  stroke: #23401f;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.theme .sun {
-  fill: currentColor;
-  stroke: currentColor;
+.theme-sun svg {
+  fill: #23401f;
 }
 
-[data-theme="light"] .theme .sun,
-[data-theme="dark"] .theme .moon {
-  display: none;
+[data-theme="dark"] .theme svg {
+  stroke: #eef6e4;
+}
+
+[data-theme="dark"] .theme-sun svg {
+  fill: none;
+}
+
+[data-theme="dark"] .theme-moon svg {
+  fill: #eef6e4;
 }
 
 .actions {
