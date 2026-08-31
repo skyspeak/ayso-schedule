@@ -421,6 +421,14 @@ h1 {
 
 .kickoff {
   display: grid;
+  width: 100%;
+}
+
+.kick-time {
+  font-family: "Fredoka", sans-serif;
+  font-size: clamp(3.4rem, 16vw, 6.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
 }
 
 .meta strong {
@@ -538,6 +546,7 @@ h1 {
 
   .meta {
     flex-direction: column;
+    align-items: flex-start;
     gap: 4px;
   }
 

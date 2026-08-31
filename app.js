@@ -105,7 +105,7 @@
         <div class="meta">
           <span class="kickoff">
             <span class="dow">Kickoff</span>
-            <span class="day">${game.startLabel}</span>
+            <span class="kick-time">${game.startLabel}</span>
           </span>
           <span><strong>Pitch ${game.field}</strong></span>
         </div>
