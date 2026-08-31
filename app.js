@@ -11,19 +11,39 @@
     <path d="M10 16 Q8 24 14 36 M38 16 Q40 24 34 36 M24 7 Q15 9 10 16 M24 7 Q33 9 38 16"/>
   </svg>`;
 
-  function googleEventUrl(game) {
-    const compact = game.date.replace(/-/g, "");
-    const opp = game.isHome ? game.away : game.home;
-    const ha = game.isHome ? "Home" : "Away";
-    const params = new URLSearchParams({
-      action: "TEMPLATE",
-      text: `AYSO 6U Team 01 vs ${opp} (${ha})`,
-      dates: `${compact}T${game.start.replace(":", "")}00/${compact}T${game.end.replace(":", "")}00`,
-      ctz: "America/Los_Angeles",
-      location: `Bay Meadows Park, San Mateo, CA`,
-      details: `Field ${game.field}\nMap: https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9`,
-    });
-    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  const TELLERS = ["Speedy", "Dash", "Golden Speedsters"];
+
+  const JOKES = [
+    "Why don't cheetahs play hide-and-seek? They're always spotted!",
+    "What do Golden Cheetahs eat at halftime? Cheetos. For extra cheetah power.",
+    "Knock knock. Who's there? Cheetah. Cheetah who? Cheetahs never knock. They zoom in!",
+    "Dash tried to race the soccer ball. The ball said, \"Hey, that's MY job!\"",
+    "Why did the Cheeto come to Bay Meadows? To hang out with the cheetahs!",
+    "What's a cheetah's favorite drink? Cheetah-ade.",
+    "I packed Cheetos for the game. They vanished before kickoff. Speedy looked very innocent.",
+    "Why don't cheetahs make good goalies? They run so fast they score on themselves.",
+    "What's orange, crunchy, and trying to keep up? A Cheeto chasing Dash.",
+    "If you hear ZOOM, that's not a plane. That's Team 01.",
+    "Cheetahs can run 70 miles an hour. Our team can eat 70 Cheetos an hour.",
+    "What do you call a cheetah with a soccer ball? A Golden Speedster.",
+    "Coach asked who was fastest. The whole team yelled ME! That's the cheetah spirit.",
+    "Why did Speedy bring extra socks? Fast feet. Faster stink.",
+    "Dash's favorite soccer move is the dash. Speedy's favorite snack is... also the dash to the Cheetos.",
+    "What did the soccer ball say to the cheetah? \"Tag, you're it... forever!\"",
+    "Pitch A and Pitch B are both at the same park. The cheetahs still race there. Just in case.",
+    "Why was the cheetah so good at soccer? Because nobody could ketchup. Except the Cheetos.",
+  ];
+
+  let lastJoke = -1;
+
+  function pickJoke() {
+    let i = Math.floor(Math.random() * JOKES.length);
+    if (i === lastJoke) i = (i + 1) % JOKES.length;
+    lastJoke = i;
+    return {
+      who: TELLERS[Math.floor(Math.random() * TELLERS.length)],
+      text: JOKES[i],
+    };
   }
 
   function currentTheme() {
@@ -44,11 +64,28 @@
     );
   }
 
+  const jokePop = document.getElementById("joke-pop");
+  const jokeWho = document.getElementById("joke-who");
+  const jokeText = document.getElementById("joke-text");
+  const jokeClose = document.getElementById("joke-close");
+
+  function openJoke() {
+    const joke = pickJoke();
+    jokeWho.textContent = joke.who + " says";
+    jokeText.textContent = joke.text;
+    jokePop.hidden = false;
+    jokeClose.focus();
+  }
+
+  function closeJoke() {
+    jokePop.hidden = true;
+  }
+
   document.getElementById("agenda").innerHTML = AYSO_GAMES.map((game) => {
     const ha = game.isHome ? "home" : "away";
     const [, month, day] = game.date.split("-");
     return `<li>
-      <a class="game ${ha}" href="${googleEventUrl(game)}" target="_blank" rel="noreferrer">
+      <button type="button" class="game ${ha}">
         <div class="game-top">
           <div class="when">
             <span class="dow">Saturday</span>
@@ -69,9 +106,22 @@
           <span><strong>Kickoff</strong> ${game.startLabel}</span>
           <span><strong>Pitch ${game.field}</strong></span>
         </div>
-      </a>
+        <span class="tap-hint">Tap for a cheetah joke</span>
+      </button>
     </li>`;
   }).join("");
+
+  document.getElementById("agenda").addEventListener("click", (event) => {
+    if (event.target.closest(".game")) openJoke();
+  });
+
+  jokeClose.addEventListener("click", closeJoke);
+  jokePop.addEventListener("click", (event) => {
+    if (event.target === jokePop) closeJoke();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !jokePop.hidden) closeJoke();
+  });
 
   const PUBLIC_ICS = "https://skyspeak.github.io/ayso-schedule/schedule.ics";
   const google =

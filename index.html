@@ -79,7 +79,7 @@
       </figure>
 
       <h2 class="matches-title">Match days</h2>
-      <p class="matches-sub">Ten Saturday kickoffs at Bay Meadows</p>
+      <p class="matches-sub">Ten Saturday kickoffs at Bay Meadows · tap a game for a joke</p>
       <ol class="agenda" id="agenda"></ol>
 
       <section class="cta" aria-labelledby="cta-title">
@@ -91,6 +91,14 @@
         </div>
       </section>
     </main>
+
+    <div class="joke-pop" id="joke-pop" hidden>
+      <div class="joke-card" role="dialog" aria-modal="true" aria-labelledby="joke-who" aria-describedby="joke-text">
+        <p class="joke-who" id="joke-who"></p>
+        <p class="joke-text" id="joke-text"></p>
+        <button type="button" class="btn primary" id="joke-close">Hehe, okay</button>
+      </div>
+    </div>
 
     <script src="games.js"></script>
     <script src="app.js"></script>
