@@ -1,0 +1,6 @@
+Untitled/
+.DS_Store
+Screenshot*.png
+*.pyc
+__pycache__/
+.venv/
