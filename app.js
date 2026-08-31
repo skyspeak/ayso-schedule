@@ -128,7 +128,7 @@
 
   const PUBLIC_ICS = "https://skyspeak.github.io/ayso-schedule/schedule.ics";
   const google =
-    "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(PUBLIC_ICS);
+    "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(PUBLIC_ICS);
   const apple = PUBLIC_ICS.replace(/^https:/, "webcal:");
   document.getElementById("google-cal").href = google;
   document.getElementById("google-cal-footer").href = google;
