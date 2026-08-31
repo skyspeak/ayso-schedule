@@ -61,24 +61,32 @@ body {
   padding: 32px 20px 56px;
 }
 
-.top,
+.hero,
+.intro,
 main {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
-.top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
+.hero {
+  position: relative;
+  margin-bottom: 18px;
+  border: 4px solid #f5d84a;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #7ec8ea;
 }
 
-.brand {
-  display: flex;
-  gap: 14px;
-  align-items: center;
+.hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1024 / 558;
+  object-fit: cover;
+}
+
+.intro {
+  margin-bottom: 20px;
 }
 
 .ball,
@@ -164,6 +172,9 @@ h1 {
 }
 
 .theme {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   width: 48px;
   height: 48px;
   border: 3px solid var(--line);
