@@ -103,7 +103,10 @@
           <span class="jersey">${game.away}</span>
         </div>
         <div class="meta">
-          <span><strong>Kickoff</strong> ${game.startLabel}</span>
+          <span class="kickoff">
+            <span class="dow">Kickoff</span>
+            <span class="day">${game.startLabel}</span>
+          </span>
           <span><strong>Pitch ${game.field}</strong></span>
         </div>
         <span class="tap-hint">Tap for a cheetah joke</span>

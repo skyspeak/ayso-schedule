@@ -411,11 +411,16 @@ h1 {
 .meta {
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
   gap: 12px;
   flex-wrap: wrap;
   color: var(--muted);
   font-weight: 800;
   font-size: 0.98rem;
+}
+
+.kickoff {
+  display: grid;
 }
 
 .meta strong {
