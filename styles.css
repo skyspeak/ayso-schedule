@@ -219,9 +219,8 @@ h1 {
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 8px;
   margin: 14px 0 18px;
 }
@@ -237,7 +236,6 @@ h1 {
   background: var(--poster);
   color: var(--ink);
   cursor: pointer;
-  flex: 1 1 140px;
   text-align: center;
 }
 
@@ -578,5 +576,16 @@ h1 {
 
   .map {
     height: 180px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    flex: 0 1 auto;
+    min-width: 140px;
   }
 }
