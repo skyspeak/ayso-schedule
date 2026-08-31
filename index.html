@@ -37,7 +37,10 @@
         <div>
           <p class="kicker">AYSO 6U</p>
           <h1>Team 01 Fall 2026</h1>
-          <p class="lede">Saturdays at Bay Meadows</p>
+          <p class="lede">
+            Saturdays at
+            <a class="place" href="https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9" target="_blank" rel="noreferrer">Bay Meadows Park</a>
+          </p>
         </div>
       </div>
       <button type="button" class="theme" id="theme-toggle" aria-label="Switch theme">
@@ -56,12 +59,23 @@
         <a class="btn primary" href="schedule.ics" download="ayso-6u-team01-fall-2026.ics">Download calendar</a>
         <a class="btn" id="google-cal" href="schedule.ics">Google</a>
         <a class="btn" id="apple-cal" href="schedule.ics">Apple</a>
+        <a class="btn" href="https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9" target="_blank" rel="noreferrer">Map</a>
       </div>
+
+      <figure class="map">
+        <iframe
+          title="Bay Meadows Park on Google Maps"
+          src="https://maps.google.com/maps?q=37.5455337,-122.2984808&amp;z=16&amp;output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </figure>
 
       <ol class="agenda" id="agenda"></ol>
 
       <p class="foot">
-        Bay Meadows · 2000 Franklin Parkway, San Mateo · Pacific Time
+        <a href="https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9" target="_blank" rel="noreferrer">Bay Meadows Park</a>
+        · San Mateo · Pacific Time
         <span class="dot">·</span>
         <a id="google-cal-footer" href="schedule.ics">Subscribe</a>
         <button type="button" id="copy-url">Copy link</button>

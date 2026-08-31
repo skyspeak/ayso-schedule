@@ -117,6 +117,31 @@ h1 {
   font-size: 0.95rem;
 }
 
+.place {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.place:hover {
+  text-decoration: underline;
+}
+
+.map {
+  display: block;
+  margin: 0 0 18px;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  height: 180px;
+  background: var(--card);
+}
+
+.map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 .theme {
   width: 44px;
   height: 44px;

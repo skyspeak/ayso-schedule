@@ -17,7 +17,8 @@
       text: `AYSO 6U Team 01 vs ${opp} (${ha})`,
       dates: `${compact}T${game.start.replace(":", "")}00/${compact}T${game.end.replace(":", "")}00`,
       ctz: "America/Los_Angeles",
-      location: `Bay Meadows - Field ${game.field}, 2000 Franklin Parkway, San Mateo, CA 94403`,
+      location: `Bay Meadows Park, San Mateo, CA`,
+      details: `Field ${game.field}\nMap: https://maps.app.goo.gl/Xd7wb55Gjgm9JRJG9`,
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
   }
