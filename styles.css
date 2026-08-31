@@ -1,14 +1,11 @@
 :root {
-  --grass-dark: #16351f;
-  --grass: #1f5a32;
-  --grass-mid: #2e7a44;
-  --line: #e8f0c8;
+  --grass: #16351f;
   --gold: #d4b45a;
-  --gold-deep: #b48a2a;
   --cream: #f4efe2;
   --paper: #fffdf7;
   --ink: #1a241c;
   --muted: #5c6b5e;
+  --line: #e4dcc8;
   --home: #1f5a32;
   --away: #3d4f7a;
 }
@@ -19,246 +16,118 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   font-family: "Figtree", sans-serif;
   color: var(--ink);
   background: var(--cream);
-  min-height: 100vh;
 }
 
-.pitch {
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #1a4a28 0,
-      #1a4a28 48px,
-      #1f5630 48px,
-      #1f5630 96px
-    );
+header {
+  background: var(--grass);
   color: white;
-  position: relative;
-  overflow: hidden;
 }
 
-.pitch::before {
-  content: "";
-  position: absolute;
-  inset: 18px;
-  border: 2px solid rgba(232, 240, 200, 0.35);
-  border-radius: 8px;
-  pointer-events: none;
-}
-
-.pitch-inner {
-  position: relative;
-  max-width: 1080px;
+.bar {
+  max-width: 880px;
   margin: 0 auto;
-  padding: 48px 24px 40px;
+  padding: 22px 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .kicker {
   font-family: "Oswald", sans-serif;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
   color: var(--gold);
-  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 h1 {
-  font-family: "Libre Baskerville", serif;
-  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-size: 1.55rem;
   font-weight: 700;
-  line-height: 1.15;
-  max-width: 14ch;
+  margin-top: 2px;
 }
 
 .lede {
-  margin-top: 14px;
-  max-width: 38rem;
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.88);
-}
-
-.meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.chip {
-  border: 1px solid rgba(232, 240, 200, 0.4);
-  background: rgba(0, 0, 0, 0.18);
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-size: 0.85rem;
+  margin-top: 4px;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
+  gap: 8px;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.btn,
+button {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  padding: 8px 12px;
   text-decoration: none;
-  font-weight: 650;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 0.95rem;
   border: 0;
   cursor: pointer;
-  font-family: inherit;
 }
 
 .btn-gold {
   background: var(--gold);
-  color: var(--grass-dark);
-}
-
-.btn-gold:hover {
-  background: #e3c66e;
+  color: var(--grass);
 }
 
 .btn-ghost {
   background: transparent;
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.wrap {
-  max-width: 1080px;
+main {
+  max-width: 880px;
   margin: 0 auto;
-  padding: 32px 24px 72px;
+  padding: 18px 20px 40px;
 }
 
-.summary-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-top: -28px;
-  position: relative;
-  z-index: 1;
-}
-
-.stat {
-  background: var(--paper);
-  border: 1px solid #e4dcc8;
-  padding: 16px 18px;
-}
-
-.stat b {
-  display: block;
-  font-family: "Oswald", sans-serif;
-  font-size: 1.7rem;
-  letter-spacing: 0.04em;
-}
-
-.stat span {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  margin: 36px 0 16px;
-}
-
-.section-head h2 {
-  font-family: "Libre Baskerville", serif;
-  font-size: 1.6rem;
-}
-
-.section-head p {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.game {
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 0;
-  background: var(--paper);
-  border: 1px solid #e4dcc8;
-  margin-bottom: 18px;
-  overflow: hidden;
-}
-
-.clipping {
-  background: #ece6d4;
-  padding: 14px;
-  display: flex;
-  align-items: center;
-}
-
-.clipping img {
+table {
   width: 100%;
-  border: 1px solid #cfc6b0;
-  background: white;
-  display: block;
+  border-collapse: collapse;
+  background: var(--paper);
 }
 
-.game-body {
-  padding: 22px 24px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.game-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.date-block {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.day-num {
-  font-family: "Oswald", sans-serif;
-  font-size: 3rem;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-}
-
-.date-words {
+th,
+td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
   font-size: 0.95rem;
-  color: var(--muted);
+  vertical-align: middle;
 }
 
-.date-words strong {
-  display: block;
-  color: var(--ink);
+th {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.match {
+  font-family: "Oswald", sans-serif;
+  letter-spacing: 0.04em;
   font-size: 1.05rem;
 }
 
 .badge {
   font-family: "Oswald", sans-serif;
-  letter-spacing: 0.12em;
-  font-size: 0.78rem;
-  padding: 6px 10px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   color: white;
+  padding: 3px 7px;
 }
 
 .badge.home {
@@ -269,102 +138,47 @@ h1 {
   background: var(--away);
 }
 
-.matchup {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-family: "Oswald", sans-serif;
-  font-size: 2.1rem;
-  letter-spacing: 0.04em;
-}
-
-.vs {
-  font-family: "Libre Baskerville", serif;
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--gold-deep);
-  letter-spacing: 0;
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.facts strong {
-  color: var(--ink);
-  font-weight: 650;
-}
-
-.game-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.linkish {
-  color: var(--grass);
-  font-weight: 650;
-  font-size: 0.9rem;
+.add {
+  color: var(--home);
+  font-weight: 700;
+  font-size: 0.8rem;
   text-decoration: none;
 }
 
-.linkish:hover {
-  text-decoration: underline;
-}
-
-.subscribe {
-  margin-top: 28px;
-  padding: 22px 24px;
-  background: var(--grass-dark);
-  color: white;
-}
-
-.subscribe h2 {
-  font-family: "Libre Baskerville", serif;
-  font-size: 1.35rem;
-  margin-bottom: 8px;
-}
-
-.subscribe p,
-.subscribe li {
-  color: rgba(255, 255, 255, 0.86);
-  line-height: 1.5;
-}
-
-.subscribe ol {
-  margin: 12px 0 16px 1.2rem;
-}
-
-.code {
-  display: block;
-  margin-top: 8px;
-  background: rgba(0, 0, 0, 0.28);
-  padding: 10px 12px;
-  word-break: break-all;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.82rem;
-  color: var(--line);
-}
-
-footer {
-  margin-top: 28px;
+.foot {
+  margin-top: 14px;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
 }
 
-@media (max-width: 800px) {
-  .summary-bar,
-  .game,
-  .facts {
-    grid-template-columns: 1fr;
+.foot a {
+  color: var(--home);
+  font-weight: 700;
+}
+
+.foot code {
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.foot button {
+  margin-left: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 4px 8px;
+}
+
+@media (max-width: 680px) {
+  th:nth-child(5),
+  td:nth-child(5) {
+    display: none;
   }
 
-  .clipping {
-    padding: 0;
+  th,
+  td {
+    padding: 9px 8px;
+    font-size: 0.88rem;
   }
 }

@@ -4,101 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AYSO 6U Team 01 — Fall 2026</title>
-    <meta
-      name="description"
-      content="AYSO 6U Team 01 Fall 2026 schedule at Bay Meadows Park, San Mateo. Download ICS or add the public Google Calendar."
-    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;650&family=Libre+Baskerville:ital,wght@0,700;1,400&family=Oswald:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Oswald:wght@500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="pitch">
-      <div class="pitch-inner">
-        <p class="kicker">American Youth Soccer Organization</p>
-        <h1>6U Team 01 Fall 2026</h1>
-        <p class="lede">
-          Ten Saturday games at Bay Meadows Park in San Mateo. Home games are
-          on Field A; away games are on Field B. Opening kickoff is 8:15 AM;
-          the rest of the season is 12:15–1:00 PM.
-        </p>
-        <div class="meta-row">
-          <span class="chip">Bay Meadows Park</span>
-          <span class="chip">2000 Franklin Parkway, San Mateo</span>
-          <span class="chip">Sep 12 – Nov 14, 2026</span>
+    <header>
+      <div class="bar">
+        <div>
+          <p class="kicker">AYSO 6U</p>
+          <h1>Team 01 · Fall 2026</h1>
+          <p class="lede">Bay Meadows · Saturdays · Sep 12–Nov 14</p>
         </div>
         <div class="actions">
-          <a class="btn btn-gold" href="schedule.ics" download="ayso-6u-team01-fall-2026.ics"
-            >Download ICS</a
-          >
-          <a class="btn btn-ghost" id="google-cal" href="schedule.ics"
-            >Add public Google Calendar</a
-          >
-          <a class="btn btn-ghost" id="apple-cal" href="schedule.ics"
-            >Subscribe in Apple Calendar</a
-          >
+          <a class="btn btn-gold" href="schedule.ics" download="ayso-6u-team01-fall-2026.ics">Download ICS</a>
+          <a class="btn btn-ghost" id="google-cal" href="schedule.ics">Google Calendar</a>
+          <a class="btn btn-ghost" id="apple-cal" href="schedule.ics">Apple Calendar</a>
         </div>
       </div>
     </header>
 
-    <main class="wrap">
-      <section class="summary-bar" aria-label="Season snapshot">
-        <div class="stat">
-          <b>10</b>
-          <span>games</span>
-        </div>
-        <div class="stat">
-          <b>5 / 5</b>
-          <span>home / away</span>
-        </div>
-        <div class="stat">
-          <b>45 min</b>
-          <span>each match</span>
-        </div>
-        <div class="stat">
-          <b>6U</b>
-          <span>division</span>
-        </div>
-      </section>
-
-      <div class="section-head">
-        <h2>Matchday agenda</h2>
-        <p>Pulled from the original schedule screenshots</p>
-      </div>
-      <div id="agenda"></div>
-
-      <section class="subscribe" id="subscribe">
-        <h2>Public Google Calendar</h2>
-        <p>
-          The ICS file is published at a public URL. Google Calendar can
-          subscribe to it and stay in sync if the file is updated.
-        </p>
-        <ol>
-          <li>Open Google Calendar on the web.</li>
-          <li>On the left, choose Other calendars → From URL.</li>
-          <li>Paste the public ICS address below and click Add calendar.</li>
-        </ol>
-        <p>Public ICS address</p>
-        <code class="code" id="ics-url">schedule.ics</code>
-        <div class="actions">
-          <a class="btn btn-gold" id="google-cal-footer" href="schedule.ics"
-            >Open in Google Calendar</a
-          >
-          <button class="btn btn-ghost" id="copy-url" type="button">
-            Copy ICS URL
-          </button>
-        </div>
-      </section>
-
-      <footer>
-        Location used in the calendar file: Bay Meadows — Field A or Field B,
-        2000 Franklin Parkway, San Mateo, CA 94403. Times are Pacific
-        (America/Los_Angeles).
-      </footer>
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Match</th>
+            <th>Field</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="agenda"></tbody>
+      </table>
+      <p class="foot">
+        2000 Franklin Parkway, San Mateo · Pacific Time ·
+        <a id="google-cal-footer" href="schedule.ics">Subscribe</a>
+        · <code id="ics-url">schedule.ics</code>
+        <button id="copy-url" type="button">Copy URL</button>
+      </p>
     </main>
 
     <script src="games.js"></script>
