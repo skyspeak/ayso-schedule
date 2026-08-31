@@ -182,7 +182,7 @@ h1 {
 }
 
 .btn,
-.foot button {
+button {
   font-family: inherit;
   font-weight: 800;
   font-size: 0.88rem;
@@ -289,29 +289,31 @@ h1 {
   display: none;
 }
 
-.foot {
-  margin-top: 18px;
+.cta {
+  margin-top: 22px;
+  padding: 20px 18px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 22px;
+}
+
+.cta h2 {
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.cta p {
   color: var(--muted);
-  font-size: 0.85rem;
   font-weight: 700;
-  line-height: 1.6;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  margin-bottom: 14px;
 }
 
-.foot a {
-  color: var(--accent);
-}
-
-.foot button {
-  margin-left: 6px;
-  padding: 3px 10px;
-  font-size: 0.78rem;
-}
-
-.ics {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.72rem;
-  word-break: break-all;
+.cta .actions {
+  margin-bottom: 0;
 }
 
 @media (max-width: 680px) {

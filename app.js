@@ -1,13 +1,6 @@
 (function () {
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  function icsHref() {
-    const path = location.pathname.endsWith("/")
-      ? location.pathname
-      : location.pathname.replace(/[^/]+$/, "");
-    return `${location.origin}${path}schedule.ics`;
-  }
-
   function googleEventUrl(game) {
     const compact = game.date.replace(/-/g, "");
     const opp = game.isHome ? game.away : game.home;
@@ -64,21 +57,13 @@
     </li>`;
   }).join("");
 
-  const url = icsHref();
-  const google = "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(url);
-  const apple = url.replace(/^https:/, "webcal:").replace(/^http:/, "webcal:");
+  const PUBLIC_ICS = "https://skyspeak.github.io/ayso-schedule/schedule.ics";
+  const google =
+    "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(PUBLIC_ICS);
+  const apple = PUBLIC_ICS.replace(/^https:/, "webcal:");
   document.getElementById("google-cal").href = google;
   document.getElementById("google-cal-footer").href = google;
   document.getElementById("apple-cal").href = apple;
-  document.getElementById("ics-url").textContent = url;
-  document.getElementById("copy-url").addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      document.getElementById("copy-url").textContent = "Copied";
-    } catch {
-      window.prompt("Copy this calendar link", url);
-    }
-  });
 
   setTheme(currentTheme());
   document.getElementById("theme-toggle").addEventListener("click", () => {
