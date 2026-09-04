@@ -362,6 +362,35 @@ h1 {
   color: var(--away-ink);
 }
 
+.game-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  background: var(--gold);
+  color: #1c1a12;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px 8px 8px;
+}
+
+.bang {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #1c1a12;
+  color: #f5d84a;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .scoreboard {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -542,6 +571,17 @@ h1 {
   .badge {
     font-size: 0.78rem;
     padding: 6px 9px;
+  }
+
+  .game-alert {
+    font-size: 0.95rem;
+    padding: 7px 12px 7px 7px;
+  }
+
+  .bang {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
   }
 
   .meta {

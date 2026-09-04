@@ -84,6 +84,9 @@
   document.getElementById("agenda").innerHTML = AYSO_GAMES.map((game) => {
     const ha = game.isHome ? "home" : "away";
     const [, month, day] = game.date.split("-");
+    const alert = game.alert
+      ? `<p class="game-alert"><span class="bang" aria-hidden="true">!</span><span>${game.alert}</span></p>`
+      : "";
     return `<li>
       <button type="button" class="game ${ha}">
         <div class="game-top">
@@ -94,6 +97,7 @@
           </div>
           <span class="badge ${ha}">${game.isHome ? "home game" : "away game"}</span>
         </div>
+        ${alert}
         <div class="scoreboard">
           <span class="jersey">${game.home}</span>
           <span class="versus">
@@ -127,9 +131,10 @@
   });
 
   const PUBLIC_ICS = "https://skyspeak.github.io/ayso-schedule/schedule.ics";
+  const WEBCAL_ICS = PUBLIC_ICS.replace(/^https:/, "webcal:");
   const google =
-    "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(PUBLIC_ICS);
-  const apple = PUBLIC_ICS.replace(/^https:/, "webcal:");
+    "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(WEBCAL_ICS);
+  const apple = WEBCAL_ICS;
   document.getElementById("google-cal").href = google;
   document.getElementById("google-cal-footer").href = google;
   document.getElementById("apple-cal").href = apple;
