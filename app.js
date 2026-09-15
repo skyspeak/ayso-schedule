@@ -69,10 +69,90 @@
   const jokeText = document.getElementById("joke-text");
   const jokeClose = document.getElementById("joke-close");
 
+  function todayStamp() {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Los_Angeles",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+  }
+
+  function nowMinutes() {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(new Date());
+    const hour = Number(parts.find((part) => part.type === "hour").value);
+    const minute = Number(parts.find((part) => part.type === "minute").value);
+    return hour * 60 + minute;
+  }
+
+  function toMinutes(hhmm) {
+    const [hour, minute] = hhmm.split(":").map(Number);
+    return hour * 60 + minute;
+  }
+
+  function isPlayed(game) {
+    const today = todayStamp();
+    if (game.date < today) return true;
+    if (game.date > today) return false;
+    return nowMinutes() >= toMinutes(game.end);
+  }
+
+  function saturdayOfThisWeek() {
+    const today = todayStamp();
+    const [year, month, day] = today.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    const weekday = date.getDay();
+    const saturday = new Date(date);
+    if (weekday === 0) saturday.setDate(day - 1);
+    else saturday.setDate(day + (6 - weekday));
+    const y = saturday.getFullYear();
+    const m = String(saturday.getMonth() + 1).padStart(2, "0");
+    const d = String(saturday.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function weekGame() {
+    const thisSaturday = saturdayOfThisWeek();
+    const thisWeek = AYSO_GAMES.find((game) => game.date === thisSaturday);
+    if (thisWeek) return thisWeek;
+    const today = todayStamp();
+    return (
+      AYSO_GAMES.find((game) => game.date >= today) ||
+      AYSO_GAMES[AYSO_GAMES.length - 1]
+    );
+  }
+
+  function esc(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function openJoke() {
     const joke = pickJoke();
     jokeWho.textContent = joke.who + " says";
     jokeText.textContent = joke.text;
+    jokeClose.textContent = "Hehe, okay";
+    jokePop.hidden = false;
+    jokeClose.focus();
+  }
+
+  function openHighlights(game) {
+    jokeWho.textContent = "Match highlights";
+    jokeText.innerHTML = (game.highlights || [])
+      .map((line, index, lines) => {
+        const last = index === lines.length - 1;
+        return `<span${last ? ' class="highlight-last"' : ""}>${esc(line)}</span>`;
+      })
+      .join("");
+    jokeClose.textContent = "Nice.";
     jokePop.hidden = false;
     jokeClose.focus();
   }
@@ -81,46 +161,95 @@
     jokePop.hidden = true;
   }
 
+  const focus = weekGame();
+  const playedCount = AYSO_GAMES.filter(isPlayed).length;
+  const sub = document.getElementById("matches-sub");
+  if (sub && playedCount) {
+    sub.textContent =
+      playedCount === 1
+        ? "Ten Saturday kickoffs at Bay Meadows · one game played, this week is up next"
+        : `Ten Saturday kickoffs at Bay Meadows · ${playedCount} games played, this week is up next`;
+  }
+
   document.getElementById("agenda").innerHTML = AYSO_GAMES.map((game) => {
     const ha = game.isHome ? "home" : "away";
     const [, month, day] = game.date.split("-");
+    const played = isPlayed(game);
+    const thisWeek = game.date === focus.date;
     const alert = game.alert
-      ? `<p class="game-alert"><span class="bang" aria-hidden="true">!</span><span>${game.alert}</span></p>`
+      ? `<p class="game-alert"><span class="bang" aria-hidden="true">!</span><span>${esc(game.alert)}</span></p>`
       : "";
+    const highlights = played && game.highlights && game.highlights.length
+      ? `<ul class="highlights">${game.highlights
+          .map((line, index) => {
+            const last = index === game.highlights.length - 1;
+            return `<li${last ? ' class="highlight-last"' : ""}>${esc(line)}</li>`;
+          })
+          .join("")}</ul>`
+      : "";
+    const badge = played
+      ? `<span class="badge played">played</span>`
+      : `<span class="badges">${thisWeek ? `<span class="badge this-week">this week</span>` : ""}<span class="badge ${ha}">${game.isHome ? "home game" : "away game"}</span></span>`;
+    const classes = [
+      "game",
+      ha,
+      played ? "played" : "",
+      thisWeek ? "this-week" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
     return `<li>
-      <button type="button" class="game ${ha}">
+      <button type="button" class="${classes}" data-date="${game.date}" id="week-${game.date}">
         <div class="game-top">
           <div class="when">
             <span class="dow">Saturday</span>
             <span class="day">${Number(day)}</span>
             <span class="mon">${MONTHS[Number(month) - 1]}</span>
           </div>
-          <span class="badge ${ha}">${game.isHome ? "home game" : "away game"}</span>
+          ${badge}
         </div>
         ${alert}
-        <div class="scoreboard">
-          <span class="jersey">${game.home}</span>
-          <span class="versus">
-            ${BALL}
-            <span>vs</span>
-          </span>
-          <span class="jersey">${game.away}</span>
+        <div class="match-body">
+          ${played ? `<span class="game-x" aria-hidden="true"><span></span><span></span></span>` : ""}
+          <div class="scoreboard">
+            <span class="jersey">${game.home}</span>
+            <span class="versus">
+              ${BALL}
+              <span>vs</span>
+            </span>
+            <span class="jersey">${game.away}</span>
+          </div>
+          <div class="meta">
+            <span class="kickoff">
+              <span class="dow">Kickoff</span>
+              <span class="kick-time">${game.startLabel}</span>
+            </span>
+            <span><strong>Pitch ${game.field}</strong></span>
+          </div>
         </div>
-        <div class="meta">
-          <span class="kickoff">
-            <span class="dow">Kickoff</span>
-            <span class="kick-time">${game.startLabel}</span>
-          </span>
-          <span><strong>Pitch ${game.field}</strong></span>
-        </div>
-        <span class="tap-hint">Tap for a cheetah joke</span>
+        ${highlights}
+        <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a cheetah joke"}</span>
       </button>
     </li>`;
   }).join("");
 
   document.getElementById("agenda").addEventListener("click", (event) => {
-    if (event.target.closest(".game")) openJoke();
+    const button = event.target.closest(".game");
+    if (!button) return;
+    const game = AYSO_GAMES.find((item) => item.date === button.dataset.date);
+    if (game && isPlayed(game) && game.highlights && game.highlights.length) {
+      openHighlights(game);
+      return;
+    }
+    openJoke();
   });
+
+  const weekCard = document.getElementById("week-" + focus.date);
+  if (weekCard) {
+    requestAnimationFrame(() => {
+      weekCard.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" });
+    });
+  }
 
   jokeClose.addEventListener("click", closeJoke);
   jokePop.addEventListener("click", (event) => {

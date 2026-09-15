@@ -300,6 +300,7 @@ h1 {
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  scroll-margin-top: 16px;
 }
 
 .game::after {
@@ -360,6 +361,23 @@ h1 {
 .badge.away {
   background: var(--away);
   color: var(--away-ink);
+}
+
+.badge.played {
+  background: var(--ink);
+  color: var(--gold);
+}
+
+.badge.this-week {
+  background: var(--gold);
+  color: #1c1a12;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .game-alert {
@@ -472,6 +490,86 @@ h1 {
   padding-bottom: 8px;
 }
 
+.match-body {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-x {
+  position: absolute;
+  inset: 6px 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.game-x span {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 50%;
+  height: 10px;
+  margin-top: -5px;
+  background: #e24b3b;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+}
+
+.game-x span:first-child {
+  transform: rotate(28deg);
+}
+
+.game-x span:last-child {
+  transform: rotate(-28deg);
+}
+
+.game.played .scoreboard,
+.game.played .kick-time,
+.game.played .jersey {
+  opacity: 0.45;
+}
+
+.highlights {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  position: relative;
+  z-index: 3;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.highlights li {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--muted);
+  padding-left: 1.1em;
+  position: relative;
+}
+
+.highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.highlight-last {
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.highlights .highlight-last::before {
+  background: var(--gold);
+  outline: 2px solid var(--line);
+}
+
 [data-theme="dark"] .tap-hint {
   color: var(--gold);
 }
@@ -533,6 +631,12 @@ h1 {
   font-size: 1.45rem;
   line-height: 1.35;
   margin-bottom: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.joke-text .highlight-last {
+  color: var(--ink);
 }
 
 @media (max-width: 520px) {

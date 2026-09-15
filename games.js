@@ -1,5 +1,21 @@
 window.AYSO_GAMES = [
-  { date: "2026-09-12", weekday: "Sat", start: "08:15", end: "09:00", startLabel: "8:15 AM", endLabel: "9:00 AM", home: "01", away: "18", field: "A", isHome: true },
+  {
+    date: "2026-09-12",
+    weekday: "Sat",
+    start: "08:15",
+    end: "09:00",
+    startLabel: "8:15 AM",
+    endLabel: "9:00 AM",
+    home: "01",
+    away: "18",
+    field: "A",
+    isHome: true,
+    highlights: [
+      "Season opener, home on Field A",
+      "Golden Cheetahs took the pitch against Team 18",
+      "Samuel scored a hattrick!",
+    ],
+  },
   { date: "2026-09-19", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "08", away: "01", field: "B", isHome: false },
   { date: "2026-09-26", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "01", away: "06", field: "A", isHome: true },
   { date: "2026-10-03", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "15", away: "01", field: "B", isHome: false, alert: "no coach present!" },
