@@ -13,36 +13,49 @@
 
   const TELLERS = ["Speedy", "Dash", "Golden Speedsters"];
 
-  const JOKES = [
-    "Why don't cheetahs play hide-and-seek? They're always spotted!",
-    "How do you stop a cheetah from winning? You cheetah.",
-    "What's faster than a cheetah? A cheetah who heard the Cheetos bag open.",
-    "Why did the soccer shoe go to the doctor? It was under a lot of pressure.",
-    "I told Dash to save me a Cheeto. He said, \"I would, but I'm a cheetah.\"",
-    "Why was the soccer ball afraid of Team 01? Too many spots. Too many feet.",
-    "Knock knock. Who's there? Boo. Boo who? Don't cry. We brought Cheetos.",
-    "What do you call a cheetah on the bench? A waiting spot.",
-    "Why can't you hear a cheetah in the bathroom? Too fast.",
-    "Coach: Who wants water? Whole team: CHEETOS.",
-    "What's a cheetah's favorite snack play? The crunch and run.",
-    "Why did Speedy sit on the ball? He thought that's how you hatch a goal.",
-    "A turtle challenged Dash to a race. Dash said, \"Okay. See you next season.\"",
-    "What do Golden Cheetahs put on their pizza? Catch-up.",
-    "Why did the Cheeto go to the soccer game? It heard there would be cheetahs. It was not ready.",
-    "What's black, yellow, and orange? A cheetah that found the snacks.",
-    "Why did the referee give Dash a card? He ran so fast the whistle got jealous.",
-    "I packed 10 Cheetos for 10 cheetahs. I now pack 200.",
+  const LINES = [
+    { kind: "joke", text: "Why don't cheetahs play freeze tag? They would rather not." },
+    { kind: "joke", text: "Coach blew the whistle. Dash was already in the snack line." },
+    { kind: "joke", text: "What's a cheetah's favorite position? Wherever the ball used to be." },
+    { kind: "joke", text: "A turtle challenged Dash. Dash said, \"Text me when you get to midfield.\"" },
+    { kind: "joke", text: "I asked Speedy to go slow. He whispered, \"I don't know how.\"" },
+    { kind: "joke", text: "Why did the soccer ball hide? It heard ten cheetahs coming." },
+    { kind: "joke", text: "Referee: Offsides. Cheetah: I wasn't offsides. I was early." },
+    { kind: "joke", text: "How can you tell Golden Cheetahs were here? Orange fingerprints. And a breeze." },
+    { kind: "joke", text: "Knock knock. Who's there? Cheetah. Cheetah who? Cheetahs never knock. They're already inside." },
+    { kind: "joke", text: "What's louder than a Cheetos bag? A cheetah who heard the Cheetos bag." },
+    { kind: "joke", text: "Why do cheetahs make terrible spies? Spots. Also they arrive before the secret." },
+    { kind: "joke", text: "Speedy's game plan: 1. Run. 2. Run. 3. Ask where the Cheetos went." },
+    { kind: "joke", text: "I packed ten Cheetos for ten cheetahs. I now pack two hundred." },
+    { kind: "joke", text: "Coach: Who wants water? Whole team, already orange: CHEETOS." },
+    { kind: "fact", text: "The orange dust on Cheetos has a real name. It's called cheetle." },
+    { kind: "fact", text: "Cheetos started in 1948 as Crunchy. Puffs did not show up until 1971." },
+    { kind: "fact", text: "They used to be spelled Chee-tos, with a little hyphen in the middle." },
+    { kind: "fact", text: "Before Chester Cheetah, the mascot was a mouse in a three-piece suit." },
+    { kind: "fact", text: "Chester Cheetah showed up in 1986. His old line was, \"It ain't easy bein' cheesy.\"" },
+    { kind: "fact", text: "Japan has sold strawberry Cheetos. Also Pepsi-flavored Cheetos." },
+    { kind: "fact", text: "Cheetos are sold in more than 36 countries, and the flavors change to match the place." },
+    { kind: "fact", text: "From cornmeal to crunch, a Cheeto takes about 19 minutes to make." },
   ];
 
-  let lastJoke = -1;
+  let lastLine = -1;
 
-  function pickJoke() {
-    let i = Math.floor(Math.random() * JOKES.length);
-    if (i === lastJoke) i = (i + 1) % JOKES.length;
-    lastJoke = i;
+  function pickLine() {
+    let i = Math.floor(Math.random() * LINES.length);
+    if (i === lastLine) i = (i + 1) % LINES.length;
+    lastLine = i;
+    const line = LINES[i];
+    if (line.kind === "fact") {
+      return {
+        who: "Cheeto fact",
+        text: line.text,
+        close: "Orange fingers",
+      };
+    }
     return {
-      who: TELLERS[Math.floor(Math.random() * TELLERS.length)],
-      text: JOKES[i],
+      who: TELLERS[Math.floor(Math.random() * TELLERS.length)] + " says",
+      text: line.text,
+      close: "Hehe, okay",
     };
   }
 
@@ -136,10 +149,10 @@
   }
 
   function openJoke() {
-    const joke = pickJoke();
-    jokeWho.textContent = joke.who + " says";
-    jokeText.textContent = joke.text;
-    jokeClose.textContent = "Hehe, okay";
+    const line = pickLine();
+    jokeWho.textContent = line.who;
+    jokeText.textContent = line.text;
+    jokeClose.textContent = line.close;
     jokePop.hidden = false;
     jokeClose.focus();
   }
@@ -228,7 +241,7 @@
           </div>
         </div>
         ${highlights}
-        <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a cheetah joke"}</span>
+        <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a joke or a Cheeto fact"}</span>
       </button>
     </li>`;
   }).join("");
