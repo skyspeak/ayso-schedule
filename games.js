@@ -35,7 +35,7 @@ window.AYSO_GAMES = [
   },
   { date: "2026-09-26", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "01", away: "06", field: "A", isHome: true },
   { date: "2026-10-03", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "15", away: "01", field: "B", isHome: false, alert: "no coach present!", poll: true },
-  { date: "2026-10-10", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "01", away: "07", field: "A", isHome: true, poll: true },
+  { date: "2026-10-10", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "01", away: "07", field: "A", isHome: true, alert: "no coach present!", poll: true },
   { date: "2026-10-17", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "02", away: "01", field: "B", isHome: false },
   { date: "2026-10-24", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "01", away: "11", field: "A", isHome: true },
   { date: "2026-10-31", weekday: "Sat", start: "12:15", end: "13:00", startLabel: "12:15 PM", endLabel: "1:00 PM", home: "14", away: "01", field: "B", isHome: false },

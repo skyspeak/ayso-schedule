@@ -211,8 +211,7 @@
     ]
       .filter(Boolean)
       .join(" ");
-    return `<li>
-      <button type="button" class="${classes}" data-date="${game.date}" id="week-${game.date}">
+    const body = `
         <div class="game-top">
           <div class="when">
             <span class="dow">Saturday</span>
@@ -241,14 +240,27 @@
           </div>
         </div>
         ${highlights}
-        <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a joke or a Cheeto fact"}</span>
+        <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a joke or a Cheeto fact"}</span>`;
+    if (game.poll) {
+      return `<li>
+        <div class="${classes} has-rsvp" id="week-${game.date}">
+          <button type="button" class="game-tap" data-date="${game.date}">
+            ${body}
+          </button>
+          <div class="rsvp" data-date="${game.date}"></div>
+        </div>
+      </li>`;
+    }
+    return `<li>
+      <button type="button" class="${classes}" data-date="${game.date}" id="week-${game.date}">
+        ${body}
       </button>
-      ${game.poll ? `<a class="poll-jump" href="#poll">Who's around? Add yourself</a>` : ""}
     </li>`;
   }).join("");
 
   document.getElementById("agenda").addEventListener("click", (event) => {
-    const button = event.target.closest(".game");
+    if (event.target.closest(".rsvp")) return;
+    const button = event.target.closest(".game-tap, button.game");
     if (!button) return;
     const game = AYSO_GAMES.find((item) => item.date === button.dataset.date);
     if (game && isPlayed(game) && game.highlights && game.highlights.length) {
@@ -293,18 +305,17 @@
 
   function initPoll() {
     const games = AYSO_GAMES.filter((game) => game.poll);
-    const board = document.getElementById("poll-board");
-    const form = document.getElementById("poll-join");
-    const nameInput = document.getElementById("poll-name");
-    const status = document.getElementById("poll-status");
-    if (!games.length || !board || !form || !nameInput || !status) return;
+    const agenda = document.getElementById("agenda");
+    if (!games.length || !agenda || !agenda.querySelector(".rsvp")) return;
 
     const API = "https://crudcrud.com/api/a7d8d8b81601429380b88bb9f14d4675/votes";
     const STORE = "ayso-poll-v1";
-    const CHOICES = ["yes", "maybe", "no"];
+    const CHOICES = ["yes", "no"];
 
     let self = null;
     let votes = [];
+    let draft = {};
+    let statusText = "";
     let chain = Promise.resolve();
     let lastFetch = 0;
 
@@ -388,31 +399,15 @@
     }
 
     function setStatus(text) {
-      status.textContent = text;
+      statusText = text;
+      document.querySelectorAll(".rsvp-status").forEach((node) => {
+        node.textContent = text;
+      });
     }
 
-    function whenOf(date) {
-      const [, month, day] = date.split("-");
-      return { month: MONTHS[Number(month) - 1], day: Number(day) };
-    }
-
-    function choiceWord(value) {
-      if (value === "yes" || value === "maybe" || value === "no") return value;
-      return "no answer";
-    }
-
-    function symbol(value, mine) {
-      if (value === "yes") return "✓";
-      if (value === "maybe") return "?";
-      if (value === "no") return "✕";
-      return mine ? "Tap" : "–";
-    }
-
-    function nextChoice(value) {
-      if (value === "yes") return "maybe";
-      if (value === "maybe") return "no";
-      if (value === "no") return "";
-      return "yes";
+    function answerFor(vote, date) {
+      const value = vote && vote.answers && vote.answers[date];
+      return value === "yes" || value === "no" ? value : "";
     }
 
     function listed() {
@@ -425,57 +420,57 @@
     }
 
     function render() {
-      form.hidden = Boolean(self);
-      const headers = games.map((game) => {
-        const when = whenOf(game.date);
-        const place = game.alert
-          ? `<span class="poll-coach">${esc(game.alert)}</span>`
-          : `<span class="poll-where">${game.isHome ? "Home" : "Away"}</span>`;
-        const foe = game.isHome ? game.away : game.home;
-        return `<div class="poll-colhead">
-          <span class="poll-dow">Saturday</span>
-          <span class="poll-num">${when.day}</span>
-          <span class="poll-mon">${when.month}</span>
-          <span class="poll-detail">${esc(game.startLabel)} · vs ${esc(foe)}</span>
-          ${place}
-        </div>`;
-      }).join("");
-
+      const typing = document.activeElement && document.activeElement.classList.contains("rsvp-name")
+        ? document.activeElement
+        : null;
+      const typedValue = typing ? typing.value : "";
+      const typedDate = typing && typing.closest(".rsvp") ? typing.closest(".rsvp").dataset.date : "";
       const people = listed();
-      const body = people.length
-        ? people.map((vote) => {
-            const mine = Boolean(self && vote.clientId === self.clientId);
-            const remove = mine
-              ? `<button type="button" class="poll-remove" data-remove>Remove</button>`
-              : "";
-            const cells = games.map((game) => {
-              const value = (vote.answers && vote.answers[game.date]) || "";
-              const when = whenOf(game.date);
-              const label = `${vote.name}, ${when.month} ${when.day}, ${choiceWord(value)}${mine ? ". Tap to change" : ""}`;
-              const cls = ["poll-cell", value || "empty", mine ? "mine" : ""].filter(Boolean).join(" ");
-              if (!mine) {
-                return `<div class="${cls}" role="img" aria-label="${esc(label)}">${symbol(value, false)}</div>`;
-              }
-              return `<button type="button" class="${cls}" data-date="${game.date}" aria-label="${esc(label)}">${symbol(value, true)}</button>`;
-            }).join("");
-            return `<div class="poll-person${mine ? " mine" : ""}"><span>${esc(vote.name)}</span>${remove}</div>${cells}`;
-          }).join("")
-        : `<p class="poll-empty">Be the first to say if you can make it.</p>`;
 
-      const totals = games.map((game) => {
-        const yes = people.filter((vote) => vote.answers && vote.answers[game.date] === "yes").length;
-        const maybe = people.filter((vote) => vote.answers && vote.answers[game.date] === "maybe").length;
-        const extra = maybe ? `<span>${maybe} maybe</span>` : "";
-        return `<div class="poll-count"><strong>${yes}</strong><span>yes</span>${extra}</div>`;
-      }).join("");
+      document.querySelectorAll(".rsvp").forEach((slot) => {
+        const date = slot.dataset.date;
+        const mine = self ? answerFor(self, date) : (draft[date] || "");
+        const others = people.filter((vote) => {
+          if (self && vote.clientId === self.clientId) return false;
+          return answerFor(vote, date);
+        });
+        let yes = people.filter((vote) => answerFor(vote, date) === "yes").length;
+        let no = people.filter((vote) => answerFor(vote, date) === "no").length;
+        if (!self && mine === "yes") yes += 1;
+        if (!self && mine === "no") no += 1;
+        const who = self
+          ? `<p class="rsvp-you"><span>${esc(self.name)}</span><button type="button" class="rsvp-remove" data-remove>Remove</button></p>`
+          : `<form class="rsvp-join">
+              <input class="rsvp-name" maxlength="32" autocomplete="name" placeholder="Your name" aria-label="Your name" required />
+              <button class="btn primary" type="submit">Add me</button>
+            </form>`;
+        const list = others.length
+          ? `<ul class="rsvp-people">${others.map((vote) => {
+              const answer = answerFor(vote, date);
+              return `<li><span>${esc(vote.name)}</span><span class="rsvp-word ${answer}">${answer === "yes" ? "Yes" : "No"}</span></li>`;
+            }).join("")}</ul>`
+          : "";
+        const statusLine = statusText ? `<p class="rsvp-status" role="status">${esc(statusText)}</p>` : "";
+        slot.innerHTML = `
+          <p class="rsvp-label">RSVP</p>
+          ${who}
+          <div class="rsvp-picks">
+            <button type="button" class="rsvp-pick yes${mine === "yes" ? " is-on" : ""}" data-choice="yes" aria-pressed="${mine === "yes"}">Yes</button>
+            <button type="button" class="rsvp-pick no${mine === "no" ? " is-on" : ""}" data-choice="no" aria-pressed="${mine === "no"}">No</button>
+          </div>
+          ${list}
+          <p class="rsvp-count"><strong>${yes}</strong> yes · <strong>${no}</strong> no</p>
+          ${statusLine}
+        `;
+      });
 
-      board.innerHTML = `<div class="poll-grid">
-        <div class="poll-corner">Name</div>
-        ${headers}
-        ${body}
-        <div class="poll-corner"></div>
-        ${totals}
-      </div>`;
+      if (typedDate) {
+        const input = document.querySelector('.rsvp[data-date="' + typedDate + '"] .rsvp-name');
+        if (input) {
+          input.value = typedValue;
+          input.focus();
+        }
+      }
     }
 
     async function request(url, options) {
@@ -550,11 +545,15 @@
       render();
     }
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const name = nameInput.value.trim().replace(/\s+/g, " ").slice(0, 32);
-      if (!name || self) return;
+    function join(name) {
       const now = nowStamp();
+      const answers = blankAnswers();
+      Object.keys(draft).forEach((date) => {
+        if (answers[date] !== undefined && (draft[date] === "yes" || draft[date] === "no")) {
+          answers[date] = draft[date];
+        }
+      });
+      draft = {};
       self = {
         clientId: uid(),
         recordId: "",
@@ -562,11 +561,9 @@
         createdAt: now,
         updatedAt: now,
         pending: true,
-        answers: blankAnswers(),
+        answers,
       };
       rememberSelf();
-      const first = board.querySelector(".poll-cell.mine");
-      if (first) first.focus();
       setStatus("Saving…");
       queue(async () => {
         try {
@@ -577,24 +574,40 @@
           setStatus("Saved on this phone. Couldn't reach the shared poll.");
         }
       });
+    }
+
+    agenda.addEventListener("submit", (event) => {
+      const form = event.target.closest(".rsvp-join");
+      if (!form) return;
+      event.preventDefault();
+      const name = form.querySelector(".rsvp-name").value.trim().replace(/\s+/g, " ").slice(0, 32);
+      if (!name || self) return;
+      join(name);
     });
 
-    board.addEventListener("click", (event) => {
-      const remove = event.target.closest("[data-remove]");
-      if (remove && self) {
+    agenda.addEventListener("click", (event) => {
+      const slot = event.target.closest(".rsvp");
+      if (!slot) return;
+      event.stopPropagation();
+      const date = slot.dataset.date;
+      if (!games.some((game) => game.date === date)) return;
+
+      if (event.target.closest("[data-remove]") && self) {
         const recordId = self.recordId;
         const clientId = self.clientId;
         self = null;
+        draft = {};
         votes = votes.filter((vote) => vote.clientId !== clientId);
         saveLocal();
         render();
-        nameInput.focus();
+        const input = document.querySelector(".rsvp-name");
+        if (input) input.focus();
         setStatus("Removing…");
         queue(async () => {
           try {
             if (recordId) await request(API + "/" + recordId, { method: "DELETE" });
             await refresh();
-            setStatus(votes.length ? "Removed from the poll." : "No answers yet.");
+            setStatus(votes.length ? "Removed." : "");
           } catch (err) {
             setStatus("Removed on this phone. Couldn't reach the shared poll.");
           }
@@ -602,13 +615,19 @@
         return;
       }
 
-      const cell = event.target.closest("[data-date]");
-      if (!cell || !self) return;
-      const date = cell.dataset.date;
-      if (!games.some((game) => game.date === date)) return;
+      const pick = event.target.closest("[data-choice]");
+      if (!pick) return;
+      const choice = pick.dataset.choice === "no" ? "no" : "yes";
+      if (!self) {
+        draft[date] = draft[date] === choice ? "" : choice;
+        render();
+        const input = document.querySelector('.rsvp[data-date="' + date + '"] .rsvp-name');
+        if (input) input.focus();
+        return;
+      }
       self.answers = {
         ...self.answers,
-        [date]: nextChoice(self.answers[date] || ""),
+        [date]: answerFor(self, date) === choice ? "" : choice,
       };
       self.updatedAt = nowStamp();
       self.pending = true;
@@ -632,7 +651,7 @@
           await refresh();
           setStatus("Anyone with this page can see these answers.");
         } catch (err) {
-          if (!status.textContent) setStatus("Couldn't reach the shared poll.");
+          if (!statusText) setStatus("Couldn't reach the shared poll.");
         }
       });
     });
@@ -664,7 +683,7 @@
           await pushSelf();
           await refresh();
         }
-        setStatus(votes.length ? "Anyone with this page can see these answers." : "No answers yet.");
+        setStatus(votes.length ? "Anyone with this page can see these answers." : "");
       } catch (err) {
         setStatus(votes.length ? "Showing answers saved on this phone." : "Couldn't reach the shared poll.");
       }
