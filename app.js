@@ -243,6 +243,7 @@
         ${highlights}
         <span class="tap-hint">${played ? "Tap for highlights" : "Tap for a joke or a Cheeto fact"}</span>
       </button>
+      ${game.poll ? `<a class="poll-jump" href="#poll">Who's around? Add yourself</a>` : ""}
     </li>`;
   }).join("");
 
@@ -287,4 +288,386 @@
     event.stopPropagation();
     setTheme(currentTheme() === "dark" ? "light" : "dark");
   });
+
+  initPoll();
+
+  function initPoll() {
+    const games = AYSO_GAMES.filter((game) => game.poll);
+    const board = document.getElementById("poll-board");
+    const form = document.getElementById("poll-join");
+    const nameInput = document.getElementById("poll-name");
+    const status = document.getElementById("poll-status");
+    if (!games.length || !board || !form || !nameInput || !status) return;
+
+    const API = "https://crudcrud.com/api/a7d8d8b81601429380b88bb9f14d4675/votes";
+    const STORE = "ayso-poll-v1";
+    const CHOICES = ["yes", "maybe", "no"];
+
+    let self = null;
+    let votes = [];
+    let chain = Promise.resolve();
+    let lastFetch = 0;
+
+    function uid() {
+      if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+      return "p-" + Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function nowStamp() {
+      return Math.floor(Date.now() / 1000);
+    }
+
+    function stamp(value) {
+      const n = Number(value) || 0;
+      return n > 1e11 ? Math.floor(n / 1000) : n;
+    }
+
+    function loadLocal() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORE) || "null");
+        if (!raw || typeof raw !== "object") return;
+        if (validVote(raw.self)) self = normalize(raw.self);
+        if (Array.isArray(raw.votes)) votes = raw.votes.map(normalize).filter(Boolean);
+      } catch (err) {
+        self = null;
+        votes = [];
+      }
+    }
+
+    function saveLocal() {
+      localStorage.setItem(STORE, JSON.stringify({ self, votes }));
+    }
+
+    function validVote(vote) {
+      return Boolean(vote && typeof vote.clientId === "string" && typeof vote.name === "string" && vote.name.trim());
+    }
+
+    function blankAnswers() {
+      const answers = {};
+      games.forEach((game) => {
+        answers[game.date] = "";
+      });
+      return answers;
+    }
+
+    function cleanAnswers(answers) {
+      const next = blankAnswers();
+      games.forEach((game) => {
+        const value = answers && answers[game.date];
+        next[game.date] = CHOICES.includes(value) ? value : "";
+      });
+      return next;
+    }
+
+    function normalize(vote) {
+      if (!validVote(vote)) return null;
+      return {
+        clientId: vote.clientId,
+        recordId: vote.recordId || vote._id || "",
+        name: String(vote.name).trim().replace(/\s+/g, " ").slice(0, 32),
+        createdAt: stamp(vote.createdAt),
+        updatedAt: stamp(vote.updatedAt),
+        pending: Boolean(vote.pending),
+        answers: cleanAnswers(vote.answers),
+      };
+    }
+
+    function payload(vote) {
+      return {
+        clientId: vote.clientId,
+        name: vote.name,
+        createdAt: vote.createdAt,
+        updatedAt: vote.updatedAt,
+        answers: cleanAnswers(vote.answers),
+      };
+    }
+
+    function queue(task) {
+      chain = chain.then(task, task);
+      return chain;
+    }
+
+    function setStatus(text) {
+      status.textContent = text;
+    }
+
+    function whenOf(date) {
+      const [, month, day] = date.split("-");
+      return { month: MONTHS[Number(month) - 1], day: Number(day) };
+    }
+
+    function choiceWord(value) {
+      if (value === "yes" || value === "maybe" || value === "no") return value;
+      return "no answer";
+    }
+
+    function symbol(value, mine) {
+      if (value === "yes") return "✓";
+      if (value === "maybe") return "?";
+      if (value === "no") return "✕";
+      return mine ? "Tap" : "–";
+    }
+
+    function nextChoice(value) {
+      if (value === "yes") return "maybe";
+      if (value === "maybe") return "no";
+      if (value === "no") return "";
+      return "yes";
+    }
+
+    function listed() {
+      const list = votes.filter(Boolean).slice();
+      list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      if (!self) return list;
+      const rest = list.filter((vote) => vote.clientId !== self.clientId);
+      const mine = list.find((vote) => vote.clientId === self.clientId) || self;
+      return [mine, ...rest];
+    }
+
+    function render() {
+      form.hidden = Boolean(self);
+      const headers = games.map((game) => {
+        const when = whenOf(game.date);
+        const place = game.alert
+          ? `<span class="poll-coach">${esc(game.alert)}</span>`
+          : `<span class="poll-where">${game.isHome ? "Home" : "Away"}</span>`;
+        const foe = game.isHome ? game.away : game.home;
+        return `<div class="poll-colhead">
+          <span class="poll-dow">Saturday</span>
+          <span class="poll-num">${when.day}</span>
+          <span class="poll-mon">${when.month}</span>
+          <span class="poll-detail">${esc(game.startLabel)} · vs ${esc(foe)}</span>
+          ${place}
+        </div>`;
+      }).join("");
+
+      const people = listed();
+      const body = people.length
+        ? people.map((vote) => {
+            const mine = Boolean(self && vote.clientId === self.clientId);
+            const remove = mine
+              ? `<button type="button" class="poll-remove" data-remove>Remove</button>`
+              : "";
+            const cells = games.map((game) => {
+              const value = (vote.answers && vote.answers[game.date]) || "";
+              const when = whenOf(game.date);
+              const label = `${vote.name}, ${when.month} ${when.day}, ${choiceWord(value)}${mine ? ". Tap to change" : ""}`;
+              const cls = ["poll-cell", value || "empty", mine ? "mine" : ""].filter(Boolean).join(" ");
+              if (!mine) {
+                return `<div class="${cls}" role="img" aria-label="${esc(label)}">${symbol(value, false)}</div>`;
+              }
+              return `<button type="button" class="${cls}" data-date="${game.date}" aria-label="${esc(label)}">${symbol(value, true)}</button>`;
+            }).join("");
+            return `<div class="poll-person${mine ? " mine" : ""}"><span>${esc(vote.name)}</span>${remove}</div>${cells}`;
+          }).join("")
+        : `<p class="poll-empty">Be the first to say if you can make it.</p>`;
+
+      const totals = games.map((game) => {
+        const yes = people.filter((vote) => vote.answers && vote.answers[game.date] === "yes").length;
+        const maybe = people.filter((vote) => vote.answers && vote.answers[game.date] === "maybe").length;
+        const extra = maybe ? `<span>${maybe} maybe</span>` : "";
+        return `<div class="poll-count"><strong>${yes}</strong><span>yes</span>${extra}</div>`;
+      }).join("");
+
+      board.innerHTML = `<div class="poll-grid">
+        <div class="poll-corner">Name</div>
+        ${headers}
+        ${body}
+        <div class="poll-corner"></div>
+        ${totals}
+      </div>`;
+    }
+
+    async function request(url, options) {
+      const response = await fetch(url, {
+        cache: "no-store",
+        ...options,
+        headers: {
+          Accept: "application/json",
+          ...(options && options.body ? { "Content-Type": "application/json" } : {}),
+        },
+      });
+      if (!response.ok) throw new Error(String(response.status));
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
+    }
+
+    function mergeRemote(remote) {
+      const incoming = (Array.isArray(remote) ? remote : []).map(normalize).filter(Boolean);
+      const byId = new Map();
+      incoming.forEach((vote) => byId.set(vote.clientId, vote));
+      if (self) {
+        const remoteSelf = byId.get(self.clientId);
+        if (remoteSelf && !self.recordId) self.recordId = remoteSelf.recordId;
+        const keepLocal = !remoteSelf || self.updatedAt >= remoteSelf.updatedAt;
+        if (keepLocal) {
+          byId.set(self.clientId, {
+            ...self,
+            recordId: self.recordId || (remoteSelf && remoteSelf.recordId) || "",
+          });
+        } else {
+          self = { ...remoteSelf, pending: false };
+        }
+      }
+      votes = [...byId.values()];
+      saveLocal();
+    }
+
+    async function refresh() {
+      const remote = await request(API);
+      lastFetch = Date.now();
+      mergeRemote(remote);
+      render();
+    }
+
+    async function pushSelf() {
+      if (!self) return;
+      const body = JSON.stringify(payload(self));
+      if (!self.recordId) {
+        const created = await request(API, { method: "POST", body });
+        if (created && created._id) self.recordId = created._id;
+        self.pending = false;
+        saveLocal();
+        return;
+      }
+      try {
+        await request(API + "/" + self.recordId, { method: "PUT", body });
+      } catch (err) {
+        if (err && err.message === "404") {
+          self.recordId = "";
+          await pushSelf();
+          return;
+        }
+        throw err;
+      }
+      self.pending = false;
+      saveLocal();
+    }
+
+    function rememberSelf() {
+      votes = votes.filter((vote) => vote.clientId !== self.clientId).concat({ ...self });
+      saveLocal();
+      render();
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = nameInput.value.trim().replace(/\s+/g, " ").slice(0, 32);
+      if (!name || self) return;
+      const now = nowStamp();
+      self = {
+        clientId: uid(),
+        recordId: "",
+        name,
+        createdAt: now,
+        updatedAt: now,
+        pending: true,
+        answers: blankAnswers(),
+      };
+      rememberSelf();
+      const first = board.querySelector(".poll-cell.mine");
+      if (first) first.focus();
+      setStatus("Saving…");
+      queue(async () => {
+        try {
+          await pushSelf();
+          await refresh();
+          setStatus("Saved. Anyone with this page can see it.");
+        } catch (err) {
+          setStatus("Saved on this phone. Couldn't reach the shared poll.");
+        }
+      });
+    });
+
+    board.addEventListener("click", (event) => {
+      const remove = event.target.closest("[data-remove]");
+      if (remove && self) {
+        const recordId = self.recordId;
+        const clientId = self.clientId;
+        self = null;
+        votes = votes.filter((vote) => vote.clientId !== clientId);
+        saveLocal();
+        render();
+        nameInput.focus();
+        setStatus("Removing…");
+        queue(async () => {
+          try {
+            if (recordId) await request(API + "/" + recordId, { method: "DELETE" });
+            await refresh();
+            setStatus(votes.length ? "Removed from the poll." : "No answers yet.");
+          } catch (err) {
+            setStatus("Removed on this phone. Couldn't reach the shared poll.");
+          }
+        });
+        return;
+      }
+
+      const cell = event.target.closest("[data-date]");
+      if (!cell || !self) return;
+      const date = cell.dataset.date;
+      if (!games.some((game) => game.date === date)) return;
+      self.answers = {
+        ...self.answers,
+        [date]: nextChoice(self.answers[date] || ""),
+      };
+      self.updatedAt = nowStamp();
+      self.pending = true;
+      rememberSelf();
+      queue(async () => {
+        try {
+          await pushSelf();
+          setStatus("Saved. Anyone with this page can see it.");
+        } catch (err) {
+          setStatus("Saved on this phone. Couldn't reach the shared poll.");
+        }
+      });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - lastFetch < 20000) return;
+      queue(async () => {
+        try {
+          if (self && self.pending) await pushSelf();
+          await refresh();
+          setStatus("Anyone with this page can see these answers.");
+        } catch (err) {
+          if (!status.textContent) setStatus("Couldn't reach the shared poll.");
+        }
+      });
+    });
+
+    loadLocal();
+    render();
+    setStatus("Checking who's answered…");
+    queue(async () => {
+      const localSelf = self
+        ? { ...self, answers: { ...self.answers } }
+        : null;
+      try {
+        const remote = await request(API);
+        lastFetch = Date.now();
+        const incoming = (Array.isArray(remote) ? remote : []).map(normalize).filter(Boolean);
+        const remoteSelf = localSelf
+          ? incoming.find((vote) => vote.clientId === localSelf.clientId)
+          : null;
+        const localNewer = Boolean(
+          localSelf && (!remoteSelf || localSelf.updatedAt > remoteSelf.updatedAt)
+        );
+        mergeRemote(remote);
+        render();
+        if (localNewer && self) {
+          self.answers = localSelf.answers;
+          self.updatedAt = localSelf.updatedAt;
+          self.pending = true;
+          if (remoteSelf && !self.recordId) self.recordId = remoteSelf.recordId;
+          await pushSelf();
+          await refresh();
+        }
+        setStatus(votes.length ? "Anyone with this page can see these answers." : "No answers yet.");
+      } catch (err) {
+        setStatus(votes.length ? "Showing answers saved on this phone." : "Couldn't reach the shared poll.");
+      }
+    });
+  }
 })();

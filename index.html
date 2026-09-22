@@ -22,7 +22,7 @@
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <div class="poster">
@@ -83,6 +83,22 @@
       <p class="matches-sub" id="matches-sub">Ten Saturday kickoffs at Bay Meadows · tap a game for a joke</p>
       <ol class="agenda" id="agenda"></ol>
 
+      <section class="poll" id="poll" aria-labelledby="poll-title">
+        <h2 id="poll-title">Who's around?</h2>
+        <p class="poll-sub">October 3 and October 10. Add your name, then tap yes, maybe, or no.</p>
+        <form class="poll-join" id="poll-join">
+          <input id="poll-name" name="name" maxlength="32" autocomplete="name" placeholder="Your name" aria-label="Your name" required />
+          <button class="btn primary" type="submit">Add me</button>
+        </form>
+        <div class="poll-legend">
+          <span><i class="swatch yes"></i>Yes</span>
+          <span><i class="swatch maybe"></i>Maybe</span>
+          <span><i class="swatch no"></i>No</span>
+        </div>
+        <div id="poll-board"></div>
+        <p class="poll-status" id="poll-status" role="status"></p>
+      </section>
+
       <section class="cta" aria-labelledby="cta-title">
         <h2 id="cta-title">Add these games to your calendar</h2>
         <p>Download the ICS file for Apple Calendar, Outlook, or any calendar app. Or subscribe in Google Calendar so the season stays in sync.</p>
@@ -102,7 +118,7 @@
       </div>
     </div>
 
-    <script src="games.js"></script>
-    <script src="app.js"></script>
+    <script src="games.js?v=3"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>
